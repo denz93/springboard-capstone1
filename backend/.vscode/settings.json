@@ -1,0 +1,5 @@
+{
+  "code-runner.defaultLanguage": "python",
+  "python.createEnvironment.contentButton": "show",
+  "python.analysis.typeCheckingMode": "basic"
+}
