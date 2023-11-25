@@ -13,4 +13,13 @@ backend/**/__pycache__
 
 # generation
 generated_client
+generated_apis
 
+
+
+### Frontend
+dist
+.firebase
+
+backend/.springboard-capstone1-fb57fb9dcb29.json
+backend/openapi.json
