@@ -40,7 +40,7 @@ def get_or_query_prompt_response(prompt: Prompt):
 
   response = ai_service.query_chat_messages(prompt.messages)
 
-  prompt.response = response
+  prompt.response = response # type: ignore
   db.session.commit()
   
   return prompt.response
@@ -76,11 +76,11 @@ def generate_tasks_from_goal(goal: Goal) -> list[Task]:
   messages = [
     {
       'role': 'system',
-      'content': f'You are a professional and efficient planner in {goal.category.name} field who helps users to achieve their goals by give them well defined and actionable tasks based on the user\'s specific goal. You should return the result as most-compact JSON format: {{"tasks": {json.dumps(example_tasks, separators=(",",":"))}}}'
+      'content': f'You are a professional and efficient planner {"in " + goal.category.name + " field " if goal.category else ""}who helps users to achieve their goals by give them well defined and actionable tasks based on the user\'s specific goal. You should return the result as most-compact JSON format: {{"tasks": {json.dumps(example_tasks, separators=(",",":"))}}}'
     },
     {
       'role': 'user',
-      'content': f'My goal is "{goal.title}". Help me to achieve it by breaking it down into smaller tasks. Max 10 tasks.'
+      'content': f'My goal is `{goal.title}` which is { "`" + goal.description + "`" if goal.description is not None and goal.description != "" else ""}. Help me to achieve it by breaking it down into smaller tasks. Max 10 tasks.'
     }
   ]
   try:

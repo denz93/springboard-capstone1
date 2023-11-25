@@ -2,6 +2,7 @@ from apiflask import Schema, fields, validators
 from schemas.goal_schema import * 
 from schemas.task_schema import *
 from schemas.user_schema import *
+from schemas.category_schema import *
 
 class QuerySchema(Schema):
   page = fields.Integer(load_default=1)

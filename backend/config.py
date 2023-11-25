@@ -18,7 +18,7 @@ class DevConfig(Config):
   SQLALCHEMY_DATABASE_URI: str = environ.get("DATABASE_URI", 'postgresql:///db_master_planing')
   SQLALCHEMY_ECHO = environ.get('SQLALCHEMY_ECHO', False) 
   SQLALCHEMY_TRACK_MODIFICATIONS = environ.get('SQLALCHEMY_TRACK_MODIFICATIONS', True)
-  SECRET_KEY: str = environ.get("FLASK_SECRET_KEY", 'secret')
+  SECRET_KEY: str = environ.get("FLASK_SECRET_KEY", '7vQeRpIKUG9I_oAfNglzgooLOOfxhz0BrIJZqQmD4HY=')
   ENV = environ.get('ENV', 'DEV')
 
 

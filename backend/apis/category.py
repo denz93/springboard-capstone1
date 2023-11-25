@@ -1,35 +1,37 @@
 from apiflask import APIBlueprint, fields, Schema, validators
-from services import auth_service
+from schemas.category_schema import CategoryCreateInput, CategoryHierarchyOutputSchema, CategoryListOutputSchema, CategorySchema, GetCategoryOutputSchema
+from services import auth_service, catergory_service
 from models import Category
 from db import db
 from role import RoleGuard 
+import logging
+
+logger = logging.getLogger()
+
 bp = cat_bp = APIBlueprint(
   'categories',
   __name__,
   url_prefix='/categories',
 )
 
-class CategorySchema(Schema):
-  id = fields.Integer()
-  name = fields.String()
-  photo_url = fields.String()
-  created_at = fields.DateTime()
 
-class CategoryCreateInput(Schema):
-  name = fields.String(required=True, validate=validators.Length(min=1, max=100))
-  photo_url = fields.String(validate=validators.Length(min=1, max=80000))
 @bp.get('/')
-@bp.output({'categories': fields.List(fields.Nested(CategorySchema))})
+@bp.output(CategoryListOutputSchema)
 def get_categories():
-  cats = db.session.query(Category)\
-    .all()
+  cats = catergory_service.get_categories()
   return {'categories': cats}
+
+@bp.get('/hierarchy')
+@bp.output(CategoryHierarchyOutputSchema)
+def get_categories_hierarchy():
+  cats = catergory_service.get_parent_categories()
+  return {'hierarchy': cats}
 
 @bp.post('/')
 @auth_service.auth_protect
 @RoleGuard.patrol_acl()
 @bp.input(CategoryCreateInput, location='json')
-@bp.output({'category': fields.Nested(CategorySchema)})
+@bp.output(GetCategoryOutputSchema)
 def create_category(json_data: dict[str, str]):
   category = Category(**json_data)
   db.session.add(category)

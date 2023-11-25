@@ -21,3 +21,7 @@ class UpdateTaskCompletionInputSchema(Schema):
 class UpdateTaskInputSchema(Schema):
   title = fields.String(validate=validators.Length(max=100))
   description = fields.String(validate=validators.Length(max=1000))
+
+class CreateTaskInputSchema(Schema):
+  title = fields.String(required=True, validate=validators.Length(min=1, max=100))
+  description = fields.String(required=False, validate=validators.Length(min=1, max=1000))

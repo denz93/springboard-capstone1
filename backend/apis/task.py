@@ -1,7 +1,8 @@
 from apiflask import APIBlueprint, Schema, fields, pagination_builder,validators
 from db import db
+from models.goal import Goal
 from schemas import QuerySchema
-from schemas.task_schema import UpdateTaskCompletionInputSchema, TaskListSchema, GetTaskOutputSchema, TaskSchema, UpdateTaskInputSchema
+from schemas.task_schema import CreateTaskInputSchema, UpdateTaskCompletionInputSchema, TaskListSchema, GetTaskOutputSchema, TaskSchema, UpdateTaskInputSchema
 from services import auth_service, task_service
 from errors import ResourceNotFoundError
 from models import Task
@@ -56,5 +57,15 @@ def update_task(task_id: int, json_data: dict):
 @bp.output(GetTaskOutputSchema)
 def delete_task(task_id: int):
   task = task_service.delete_task(task_id)
+  return {'task': task}
+
+@bp.post('/<int:goal_id>')
+@auth_service.auth_protect
+@RoleGuard.patrol_acl(Goal, 'goal_id')
+@bp.input(CreateTaskInputSchema, location='json')
+@bp.output(GetTaskOutputSchema)
+def create_task(goal_id: int, json_data: dict):
+  json_data['goal_id'] = goal_id
+  task = task_service.create_task(json_data)
   return {'task': task}
 

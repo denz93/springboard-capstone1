@@ -1,17 +1,13 @@
 from apiflask import APIBlueprint, Schema, fields, validators
-from apis.user import UserSchema
 import firebase_admin
-from firebase_admin import credentials, auth
-from firebase_admin.auth import InvalidIdTokenError, ExpiredIdTokenError, RevokedIdTokenError, CertificateFetchError
-from db import db
-from errors import InvalidFirebaseTokenError, UserAlreadyExistsError, UserNotRegisteredError
-from models import User 
-from sqlalchemy import or_
-from schemas.auth_schema import LogoutOutputSchema
+from firebase_admin import credentials
+from schemas.auth_schema import GetAuthProviderOutputSchema, LogoutOutputSchema
 from schemas.user_schema import GetUserOutputSchema
 from services import auth_service, user_service
 from os import getenv, urandom
 import logging
+from role import RoleGuard
+from services import auth_service
 
 logger = logging.getLogger(__name__)
 
@@ -27,8 +23,8 @@ bp = authentication_bp = APIBlueprint(
 
 class RegisterSchema(Schema):
   email = fields.String(required=True, validate=validators.Length(min=1, max=100))
-  first_name = fields.String(required=True, validate=validators.Length(min=1, max=100))
-  last_name = fields.String(required=True, validate=validators.Length(min=1, max=100))
+  first_name = fields.String(required=True, validate=validators.Length( max=100))
+  last_name = fields.String(required=True, validate=validators.Length(max=100))
   firebase_id_token = fields.String(required=True)
 class SignInSchema(Schema):
   firebase_id_token = fields.String(required=True)
@@ -38,22 +34,35 @@ class SignInSchema(Schema):
 @bp.output(GetUserOutputSchema)
 def register(json_data: dict[str, str]):
   user = auth_service.register(json_data)
-  auth_service.login(user.id)
-  return {'user': user}
+  token = auth_service.login(user.id)
+  return {'user': user, 'token': token}
 
 @bp.post('/signin')
 @bp.input(SignInSchema, location='json')
 @bp.output(GetUserOutputSchema)
 def signin(json_data: dict[str, str]):
   user = auth_service.signin(json_data['firebase_id_token'])
-  auth_service.login(user.id)
-  return {'user': user}
+  token = auth_service.login(user.id)
+  return {'user': user, 'token': token }
   
 @bp.post('/logout')
 @bp.output(LogoutOutputSchema)
 def logout():
   auth_service.logout()
   return {'message': 'Logged out'}
+
+@bp.post('/current_user')
+@auth_service.auth_protect
+@bp.output(GetUserOutputSchema)
+def get_current_user():
+  user = auth_service.get_current_user()
+  return {'user': user}
+
+@bp.post('/provider/<email>')
+@bp.output(GetAuthProviderOutputSchema)
+def get_auth_provider(email):
+  provider = auth_service.get_user_auth_provider(email)
+  return {'provider': provider}
 
 if getenv('ENV') == 'DEV':
   random_key = urandom(16).hex()

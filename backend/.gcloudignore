@@ -1,0 +1,8 @@
+__pycache__
+.venv
+.vscode
+.coverage
+.env.yml
+.gitignore
+*.log
+generated_client

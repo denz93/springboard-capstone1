@@ -7,7 +7,7 @@ class UserSchema(Schema):
   email = fields.String()
   first_name = fields.String()
   last_name = fields.String()
-  created_at = fields.DateTime()
+  created_at = fields.DateTime(format='timestamp_ms')
 
   @post_load
   def make_user(self, data, **kw) -> User:
@@ -19,3 +19,4 @@ class UpdateUserInputSchema(Schema):
 
 class GetUserOutputSchema(Schema):
   user = fields.Nested(UserSchema)
+  token = fields.String()

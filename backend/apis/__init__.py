@@ -3,3 +3,4 @@ from apis.task import task_bp, TaskSchema, TaskListSchema
 from apis.user import user_bp
 from apis.authentication import authentication_bp
 from apis.prompt import prompt_bp
+from apis.category import cat_bp

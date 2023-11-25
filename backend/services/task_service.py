@@ -1,5 +1,5 @@
 from models import Task
-from errors import TaskNotFoundError, UnauthorizedError
+from errors import AccessResourceNotAllowedError, TaskNotFoundError, UnauthorizedError
 from models import User, Goal
 from services import auth_service
 from db import db 
@@ -59,7 +59,9 @@ def update_completion(task_id: int, is_completed: bool):
   task = db.session.get(Task, task_id)
   if task is None:
     raise TaskNotFoundError
-  task.is_completed = is_completed
+  task.is_completed = is_completed # type: ignore
+  db.session.query(Goal).filter(Goal.id == task.goal_id).update({Goal.is_completed: all(map(lambda x: x.is_completed, task.goal.tasks))})
+  
   db.session.commit()
   return task
 

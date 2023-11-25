@@ -12,5 +12,5 @@ class Category(Base):
   photo_url: Mapped[str] = mapped_column(String(80000), nullable=True)
   created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
   parent_id: Mapped[int] = mapped_column(Integer, ForeignKey('categories.id'), nullable=True)
-  parent: Mapped['Category'] = relationship('Category', back_populates='children', cascade='', lazy='select')
-  children: Mapped[List['Category']] = relationship('Category', remote_side=[id], back_populates='parent')
+  parent: Mapped['Category'] = relationship('Category', remote_side=[id], back_populates='children', cascade='', lazy='select')
+  children: Mapped[List['Category']] = relationship('Category', back_populates='parent', lazy='joined')
