@@ -1,6 +1,6 @@
-# Capstone Project 1 - Master Planing
+# Capstone Project 1 - Master Planning
 
-This repo includes an web app for personal planing called `Master Planing`. It is an `Springboard` capstone project
+This repo includes an web app for personal planing called `Master Planning`. It is an `Springboard` capstone project
 
 ### Backend
 
