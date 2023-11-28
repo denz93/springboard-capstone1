@@ -71,7 +71,7 @@ function Home() {
     <div>
       {/** Hero section */}
       <section className='relative'>
-        <div ref={ref} className='w-full carousel snap-always min-h-[calc(100svh-80px)]'>
+        <div ref={ref} className='w-full carousel snap-always h-[calc(100svh-80px)]'>
           <div className="carousel-item w-full" slide-idx="0">
             <div className='card w-full bg-base-200 shadow-xl image-full items-center before:!absolute before:!inset-0 rounded-none before:!rounded-none'>
               <figure className='m-0 rounded-none h-full'>
